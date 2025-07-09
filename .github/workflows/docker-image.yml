@@ -20,7 +20,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          target: final
+         # target: final   # 仅在 Dockerfile 使用多阶段构建时保留
           tags: |
             localhost/qywx-push:latest
 
@@ -40,7 +40,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          target: final
+        # target: final   # 仅在 Dockerfile 使用多阶段构建时保留
           tags: |
             ${{ secrets.ALIYUN_REGISTRY }}/${{ secrets.ALIYUN_NAMESPACE }}/qywx-push:latest
           push: true
@@ -61,7 +61,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          target: final
+         # target: final   # 仅在 Dockerfile 使用多阶段构建时保留
           tags: |
             ${{ secrets.DOCKER_HUB_USERNAME }}/qywx-push:latest
           push: true
