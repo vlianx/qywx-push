@@ -4,8 +4,6 @@ on:
   push:
     branches: 
       - master # 指定触发的分支
-    paths:
-      - '.github/workflows/**'  # 监听 .github/workflows 目录下的文件变化
 
 jobs:
   build-and-push:
