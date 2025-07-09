@@ -1,32 +1,69 @@
-name: Build and Push Docker
+name: Build and Push Docker Images
 
 on:
   push:
-    branches: 
-      - master # 指定触发的分支
+    paths:
+      - '.github/workflows/**'  # 仅在action文件更新时触发
 
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3 # 检出代码
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
-    - name: Login to Aliyun Container Registry
-      uses: docker/login-action@v2
-      with:
-        registry: ${{ secrets.ALIYUN_REGISTRY }}
-        username: ${{ secrets.ALIYUN_REGISTRY_USER }}
-        password: ${{ secrets.ALIYUN_REGISTRY_PASSWORD }}
+      - name: Build Docker Image
+        id: build
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          target: final
+          tags: |
+            localhost/myimage:latest
 
-    - name: Build and Push Docker Image
-      uses: docker/build-push-action@v2
-      with:
-        context: . # 构建上下文为当前目录
-        file: Dockerfile # 指定Dockerfile路径
-        push: true # 推送镜像
-        tags: |
-          ${{ secrets.ALIYUN_REGISTRY }}/${{ secrets.ALIYUN_NAME_SPACE }}/wxpush:latest
-          ${{ secrets.ALIYUN_REGISTRY }}/${{ secrets.ALIYUN_NAME_SPACE }}/wxpush:1.0
+      - name: Push to Aliyun Registry (Ignore failure)
+        if: always()  # 无论之前步骤是否失败都执行
+        continue-on-error: true
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ secrets.ALIYUN_REGISTRY }}
+          username: ${{ secrets.ALIYUN_REGISTRY_USER }}
+          password: ${{ secrets.ALIYUN_REGISTRY_PASSWORD }}
+        id: aliyun-login
+
+      - name: Push to Aliyun (Ignore failure)
+        if: always()
+        continue-on-error: true
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          target: final
+          tags: |
+            ${{ secrets.ALIYUN_REGISTRY }}/${{ secrets.ALIYUN_NAMESPACE }}/myimage:latest
+          push: true
+          tags: |
+            ${{ secrets.ALIYUN_REGISTRY }}/${{ secrets.ALIYUN_NAMESPACE }}/myimage:latest
+
+      - name: Push to Docker Hub (Ignore failure)
+        if: always()
+        continue-on-error: true
+        uses: docker/login-action@v2
+        with:
+          registry: docker.io
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+        id: dockerhub-login
+
+      - name: Push to Docker Hub (Ignore failure)
+        if: always()
+        continue-on-error: true
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          target: final
+          tags: |
+            ${{ secrets.DOCKER_HUB_USERNAME }}/myimage:latest
+          push: true
