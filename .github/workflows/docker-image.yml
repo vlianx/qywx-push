@@ -42,8 +42,8 @@ jobs:
           context: .
         # target: final   # 仅在 Dockerfile 使用多阶段构建时保留
           tags: |
+            registry.cn-hangzhou.aliyuncs.com/docker609/qywx-push:1.0
             ${{ secrets.ALIYUN_REGISTRY }}/${{ secrets.ALIYUN_NAMESPACE }}/qywx-push:latest
-            ${{ secrets.ALIYUN_REGISTRY }}/${{ secrets.ALIYUN_NAMESPACE }}/qywx-push:1.0
           push: true
 
       - name: Login to Docker Hub (Ignore failure)
