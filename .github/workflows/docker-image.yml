@@ -43,6 +43,7 @@ jobs:
         # target: final   # 仅在 Dockerfile 使用多阶段构建时保留
           tags: |
             ${{ secrets.ALIYUN_REGISTRY }}/${{ secrets.ALIYUN_NAMESPACE }}/qywx-push:latest
+            ${{ secrets.ALIYUN_REGISTRY }}/${{ secrets.ALIYUN_NAMESPACE }}/qywx-push:1.0
           push: true
 
       - name: Push to Docker Hub (Ignore failure)
