@@ -22,7 +22,7 @@ jobs:
           context: .
           target: final
           tags: |
-            localhost/myimage:latest
+            localhost/qywx-push:latest
 
       - name: Push to Aliyun Registry (Ignore failure)
         if: always()  # 无论之前步骤是否失败都执行
@@ -42,10 +42,8 @@ jobs:
           context: .
           target: final
           tags: |
-            ${{ secrets.ALIYUN_REGISTRY }}/${{ secrets.ALIYUN_NAMESPACE }}/myimage:latest
+            ${{ secrets.ALIYUN_REGISTRY }}/${{ secrets.ALIYUN_NAMESPACE }}/qywx-push:latest
           push: true
-          tags: |
-            ${{ secrets.ALIYUN_REGISTRY }}/${{ secrets.ALIYUN_NAMESPACE }}/myimage:latest
 
       - name: Push to Docker Hub (Ignore failure)
         if: always()
@@ -65,5 +63,5 @@ jobs:
           context: .
           target: final
           tags: |
-            ${{ secrets.DOCKER_HUB_USERNAME }}/myimage:latest
+            ${{ secrets.DOCKER_HUB_USERNAME }}/qywx-push:latest
           push: true
